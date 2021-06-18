@@ -215,6 +215,9 @@ namespace TrenchBroom {
                 shader.editorImage = Path(token.data());
             } else if (kdl::ci::str_is_equal(key,"diffusemap")) {
                 token = expect(Quake3ShaderToken::String, m_tokenizer.nextToken());
+                if (kdl::ci::str_is_prefix(token.data(), "fromrgb")) { // Admer: BUREKTech 2.0 compatibility
+                    skipRemainderOfEntry();
+                }
 				shader.diffuseImage = Path(token.data());
             } else if (key == "q3map_lightimage") {
                 token = expect(Quake3ShaderToken::String, m_tokenizer.nextToken());
