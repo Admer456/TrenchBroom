@@ -20,6 +20,8 @@
 #include "PropertyDefinition.h"
 
 #include "Macros.h"
+#include "Assets/ColorRange.h"
+#include "Model/EntityColor.h"
 
 #include "kdl/reflection_impl.h"
 #include "kdl/string_utils.h"
@@ -110,6 +112,14 @@ std::string PropertyDefinition::defaultValue(const PropertyDefinition& definitio
   case PropertyDefinitionType::FlagsProperty: {
     const auto& flagsDef = static_cast<const FlagsPropertyDefinition&>(definition);
     return kdl::str_to_string(flagsDef.defaultValue());
+  }
+  case PropertyDefinitionType::ColorRgbProperty:
+  case PropertyDefinitionType::Color255RgbProperty:
+  case PropertyDefinitionType::ColorExtraProperty:
+  case PropertyDefinitionType::Color255ExtraProperty: {
+    const auto& colorDef = static_cast<const ColorPropertyDefinition&>(definition);
+    return Model::entityColorAsString(
+      colorDef.defaultValue(), colorDef.colorRange(), colorDef.hasExtraValue());
   }
   case PropertyDefinitionType::TargetSourceProperty:
   case PropertyDefinitionType::TargetDestinationProperty:
@@ -418,6 +428,63 @@ std::unique_ptr<PropertyDefinition> FlagsPropertyDefinition::doClone(
       option.isDefault());
   }
   return result;
+}
+
+static Assets::PropertyDefinitionType GetColorProperty(bool range255, bool hasAlpha)
+{
+  if (range255)
+  {
+    return hasAlpha ? PropertyDefinitionType::Color255ExtraProperty
+                    : PropertyDefinitionType::Color255RgbProperty;
+  }
+  return hasAlpha ? PropertyDefinitionType::ColorExtraProperty
+                  : PropertyDefinitionType::ColorRgbProperty;
+}
+
+ColorPropertyDefinition::ColorPropertyDefinition(
+  std::string key,
+  std::string shortDescription,
+  std::string longDescription,
+  bool readOnly,
+  bool range255,
+  bool hasExtraValue,
+  std::optional<Color> defaultValue)
+  : PropertyDefinitionWithDefaultValue{
+    std::move(key),
+    GetColorProperty(range255, hasExtraValue),
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    std::move(defaultValue)}
+{
+  m_range255 = range255;
+  m_hasExtraValue = hasExtraValue;
+}
+
+int ColorPropertyDefinition::colorRange() const
+{
+  return m_range255 ? Assets::ColorRange::Byte : Assets::ColorRange::Float;
+}
+
+bool ColorPropertyDefinition::hasExtraValue() const
+{
+  return m_hasExtraValue;
+}
+
+std::unique_ptr<PropertyDefinition> ColorPropertyDefinition::doClone(
+  std::string key,
+  std::string shortDescription,
+  std::string longDescription,
+  bool readOnly) const
+{
+  return std::make_unique<ColorPropertyDefinition>(
+    std::move(key),
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    m_range255,
+    m_hasExtraValue,
+    m_defaultValue);
 }
 
 UnknownPropertyDefinition::UnknownPropertyDefinition(

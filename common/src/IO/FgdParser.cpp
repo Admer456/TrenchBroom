@@ -29,6 +29,7 @@
 #include "IO/File.h"
 #include "IO/LegacyModelDefinitionParser.h"
 #include "IO/ParserStatus.h"
+#include "Model/EntityColor.h"
 
 #include "kdl/invoke.h"
 #include "kdl/result.h"
@@ -668,6 +669,14 @@ std::unique_ptr<Assets::PropertyDefinition> FgdParser::parsePropertyDefinition(
   {
     return parseFlagsPropertyDefinition(status, std::move(propertyKey));
   }
+  if (
+    kdl::ci::str_is_equal(typeName, "color")
+    || kdl::ci::str_is_equal(typeName, "color255")
+    || kdl::ci::str_is_equal(typeName, "color_ext")
+    || kdl::ci::str_is_equal(typeName, "color255_ext"))
+  {
+    return parseColorPropertyDefinition(status, typeName, std::move(propertyKey));
+  }
 
   status.debug(
     line,
@@ -841,6 +850,31 @@ std::unique_ptr<Assets::PropertyDefinition> FgdParser::parseFlagsPropertyDefinit
       value, std::move(shortDescription), std::move(longDescription), defaultValue);
   }
   return definition;
+}
+
+std::unique_ptr<Assets::PropertyDefinition> FgdParser::parseColorPropertyDefinition(
+  ParserStatus& status, std::string_view typeName, std::string propertyKey)
+{
+  const auto rangeIs255 = kdl::ci::str_contains(typeName, "255");
+  const auto hasExtraValue = kdl::ci::str_is_suffix(typeName, "_ext");
+  const auto readOnly = parseReadOnlyFlag(status);
+  auto shortDescription = parsePropertyDescription(status);
+  auto defaultValueRaw =
+    parseDefaultStringValue(status); // TODO: parseColor with validation
+  auto longDescription = parsePropertyDescription(status);
+  auto defaultValue = std::optional<Color>{};
+  if (defaultValueRaw.has_value())
+  {
+    defaultValue = Model::parseEntityColor(defaultValueRaw.value(), hasExtraValue);
+  }
+  return std::make_unique<Assets::ColorPropertyDefinition>(
+    std::move(propertyKey),
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    rangeIs255,
+    hasExtraValue,
+    std::move(defaultValue));
 }
 
 std::unique_ptr<Assets::PropertyDefinition> FgdParser::parseUnknownPropertyDefinition(

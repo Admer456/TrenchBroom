@@ -20,6 +20,7 @@
 #pragma once
 
 #include "Ensure.h"
+#include "Color.h"
 
 #include "kdl/reflection_decl.h"
 
@@ -40,7 +41,11 @@ enum class PropertyDefinitionType
   IntegerProperty,
   FloatProperty,
   ChoiceProperty,
-  FlagsProperty
+  FlagsProperty,
+  ColorRgbProperty,
+  Color255RgbProperty,
+  ColorExtraProperty,
+  Color255ExtraProperty
 };
 
 class PropertyDefinition
@@ -269,6 +274,33 @@ public:
 
 private:
   bool doEquals(const PropertyDefinition* other) const override;
+  std::unique_ptr<PropertyDefinition> doClone(
+    std::string key,
+    std::string shortDescription,
+    std::string longDescription,
+    bool readOnly) const override;
+};
+
+class ColorPropertyDefinition : public PropertyDefinitionWithDefaultValue<Color>
+{
+protected:
+  bool m_range255;
+  bool m_hasExtraValue;
+
+public:
+  ColorPropertyDefinition(
+    std::string key,
+    std::string shortDescription,
+    std::string longDescription,
+    bool readOnly,
+    bool range255,
+    bool hasExtraValue,
+    std::optional<Color> defaultValue = std::nullopt);
+
+  int colorRange() const;
+  bool hasExtraValue() const;
+
+private:
   std::unique_ptr<PropertyDefinition> doClone(
     std::string key,
     std::string shortDescription,

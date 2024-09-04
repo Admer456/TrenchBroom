@@ -172,6 +172,10 @@ QString EntityPropertyEditor::optionDescriptions(
   case Assets::PropertyDefinitionType::FloatProperty:
   case Assets::PropertyDefinitionType::TargetSourceProperty:
   case Assets::PropertyDefinitionType::TargetDestinationProperty:
+  case Assets::PropertyDefinitionType::ColorRgbProperty:
+  case Assets::PropertyDefinitionType::Color255RgbProperty:
+  case Assets::PropertyDefinitionType::ColorExtraProperty:
+  case Assets::PropertyDefinitionType::Color255ExtraProperty:
     return QString();
     switchDefault();
   }

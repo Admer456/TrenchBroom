@@ -144,6 +144,8 @@ private:
     ParserStatus& status, std::string propertyKey);
   std::unique_ptr<Assets::PropertyDefinition> parseFlagsPropertyDefinition(
     ParserStatus& status, std::string propertyKey);
+  std::unique_ptr<Assets::PropertyDefinition> parseColorPropertyDefinition(
+    ParserStatus& status, std::string_view typeName, std::string propertyKey);
   std::unique_ptr<Assets::PropertyDefinition> parseUnknownPropertyDefinition(
     ParserStatus& status, std::string propertyKey);
 
