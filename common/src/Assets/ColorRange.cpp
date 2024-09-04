@@ -34,9 +34,10 @@ ColorRange::Type detectColorRange(const std::string& str)
 
 ColorRange::Type detectColorRange(const std::vector<std::string>& components)
 {
-  if (components.size() != 3)
+  if (components.size() != 3 && components.size() != 4)
+  {
     return ColorRange::Unset;
-
+  }
   auto range = ColorRange::Byte;
   auto leq1 = true;
   for (size_t i = 0; i < 3 && range == ColorRange::Byte; ++i)
