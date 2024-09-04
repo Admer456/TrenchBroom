@@ -340,6 +340,15 @@ QColor toQColor(const Color& color)
     int(color.a() * 255.0f));
 }
 
+QColor toQColorClampAlpha(const Color& color)
+{
+  return QColor::fromRgb(
+    int(color.r() * 255.0f),
+    int(color.g() * 255.0f),
+    int(color.b() * 255.0f),
+    qMax(0, qMin(int(color.a() * 255.0f), 255))); // Needs clamping for RGBI values
+}
+
 QToolButton* createBitmapButton(
   const std::string& image, const QString& tooltip, QWidget* parent)
 {

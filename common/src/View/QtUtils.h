@@ -202,6 +202,7 @@ QWidget* makeUnselected(QWidget* widget, const QPalette& defaultPalette);
 
 Color fromQColor(const QColor& color);
 QColor toQColor(const Color& color);
+QColor toQColorClampAlpha(const Color& color);
 void setWindowIconTB(QWidget* window);
 void setDebugBackgroundColor(QWidget* widget, const QColor& color);
 
