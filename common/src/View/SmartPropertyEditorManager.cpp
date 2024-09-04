@@ -128,8 +128,17 @@ void SmartPropertyEditorManager::createEditors()
     makeSmartTypeEditorMatcher(Assets::PropertyDefinitionType::FlagsProperty),
     new SmartFlagsEditor{m_document});
   m_editors.emplace_back(
-    makeSmartPropertyEditorKeyMatcher({"color", "*_color", "*_color2", "*_colour"}),
-    new SmartColorEditor{m_document});
+    makeSmartTypeEditorMatcher(Assets::PropertyDefinitionType::ColorRgbProperty),
+    new SmartColorEditor{m_document, false, false});
+  m_editors.emplace_back(
+    makeSmartTypeEditorMatcher(Assets::PropertyDefinitionType::Color255RgbProperty),
+    new SmartColorEditor{m_document, true, false});
+  m_editors.emplace_back(
+    makeSmartTypeEditorMatcher(Assets::PropertyDefinitionType::ColorExtraProperty),
+    new SmartColorEditor{m_document, false, true});
+  m_editors.emplace_back(
+    makeSmartTypeEditorMatcher(Assets::PropertyDefinitionType::Color255ExtraProperty),
+    new SmartColorEditor{m_document, true, true});
   m_editors.emplace_back(
     makeSmartTypeWithSameDefinitionEditorMatcher(
       Assets::PropertyDefinitionType::ChoiceProperty),

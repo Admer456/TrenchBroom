@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Assets/PropertyDefinition.h"
 #include "View/SmartPropertyEditor.h"
 
 #include <memory>
@@ -42,30 +43,42 @@ class SmartColorEditor : public SmartPropertyEditor
   Q_OBJECT
 private:
   static const size_t ColorHistoryCellSize = 15;
-  using wxColorList = std::vector<QColor>;
+  using ColorRange = int;
+  using wxColorList = std::vector<Color>;
 
-  QRadioButton* m_floatRadio;
-  QRadioButton* m_byteRadio;
+  QLineEdit* m_extraValueBox;
   ColorButton* m_colorPicker;
   ColorTable* m_colorHistory;
+  ColorRange m_colorType;
+  Color m_currentColor;
+  bool m_withExtraValue;
 
 public:
   explicit SmartColorEditor(
-    std::weak_ptr<MapDocument> document, QWidget* parent = nullptr);
+    std::weak_ptr<MapDocument> document,
+    bool range255,
+    bool hasExtraValue,
+    QWidget* parent = nullptr);
 
 private:
   void createGui();
   void doUpdateVisual(const std::vector<Model::EntityNodeBase*>& nodes) override;
 
-  void updateColorRange(const std::vector<Model::EntityNodeBase*>& nodes);
   void updateColorHistory();
+  void updateExtraValueBox(float value);
+  float getExtraValue(bool convertColorRange = false) const;
 
-  void setColor(const QColor& wxColor) const;
+  // Qt's colour type does not support going beyond 1 or 255
+  // The smart colour editor was modified to use TB's Color internally,
+  // and when it writes the property value in "extra" mode, it samples
+  // the 4th value from the extra value textbox 
+  void setColor(const QColor& color);
+  void setColor(const Color& color);
+  Color getColor() const;
 
-  void floatRangeRadioButtonClicked();
-  void byteRangeRadioButtonClicked();
   void colorPickerChanged(const QColor& color);
   void colorTableSelected(QColor color);
+  void extraValueChanged(const QString& value);
 };
 } // namespace View
 } // namespace TrenchBroom
