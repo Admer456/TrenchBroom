@@ -29,8 +29,9 @@ namespace TrenchBroom
 {
 namespace View
 {
-ColorButton::ColorButton(QWidget* parent)
+ColorButton::ColorButton(bool withAlpha, QWidget* parent)
   : QWidget(parent)
+  , m_withAlpha(withAlpha)
   , m_colorIndicator(nullptr)
   , m_button(nullptr)
 {
@@ -50,7 +51,13 @@ ColorButton::ColorButton(QWidget* parent)
   setLayout(layout);
 
   connect(m_button, &QPushButton::clicked, this, [this]() {
-    const QColor color = QColorDialog::getColor(m_color, this);
+    using ColorDialogOption = QColorDialog::ColorDialogOption;
+    const QColor color = QColorDialog::getColor(
+      m_color,
+      this,
+      QString{},
+      this->m_withAlpha ? ColorDialogOption::ShowAlphaChannel
+                        : static_cast<ColorDialogOption>(0));
     if (color.isValid())
     {
       setColor(color);
@@ -61,10 +68,13 @@ ColorButton::ColorButton(QWidget* parent)
 
 void ColorButton::setColor(const QColor& color)
 {
+  // The alpha component skews the colour preview, so make it always 100%
+  const auto colorOpaque = QColor::fromRgb(color.red(), color.green(), color.blue());
+
   const auto borderColor = palette().color(QPalette::Active, QPalette::Mid);
-  if (color != m_color)
+  if (colorOpaque != m_color)
   {
-    m_color = color;
+    m_color = colorOpaque;
     m_colorIndicator->setStyleSheet(
       "QWidget { background-color: " + m_color.name()
       + "; border-radius: 3px; border: 1px solid " + borderColor.name() + ";}");

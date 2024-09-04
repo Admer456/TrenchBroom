@@ -35,9 +35,10 @@ private:
   QWidget* m_colorIndicator;
   QPushButton* m_button;
   QColor m_color;
+  bool m_withAlpha;
 
 public:
-  explicit ColorButton(QWidget* parent = nullptr);
+  explicit ColorButton(bool withAlpha = false, QWidget* parent = nullptr);
 signals:
   /**
    * Emitted when the color is set either programatically via setColor() or
