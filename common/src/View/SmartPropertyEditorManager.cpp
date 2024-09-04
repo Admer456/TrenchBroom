@@ -27,6 +27,7 @@
 #include "Model/Entity.h"
 #include "Model/EntityNodeBase.h"
 #include "View/MapDocument.h"
+#include "View/SmartAssetPathEditor.h"
 #include "View/SmartChoiceEditor.h"
 #include "View/SmartColorEditor.h"
 #include "View/SmartDefaultPropertyEditor.h"
@@ -130,6 +131,9 @@ void SmartPropertyEditorManager::createEditors()
   m_editors.emplace_back(
     makeSmartPropertyEditorKeyMatcher({"color", "*_color", "*_color2", "*_colour"}),
     new SmartColorEditor{m_document});
+  m_editors.emplace_back(
+    makeSmartPropertyEditorKeyMatcher({"message", "model"}),
+    new SmartAssetPathEditor{m_document});
   m_editors.emplace_back(
     makeSmartTypeWithSameDefinitionEditorMatcher(
       Assets::PropertyDefinitionType::ChoiceProperty),
