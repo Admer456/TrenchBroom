@@ -231,7 +231,7 @@
 
 @BaseClass = Light 
 [
-	_light(color255) : "Brightness" : "255 255 128 200"
+	_light(color255_ext) : "Brightness" : "255 255 128 200"
       style(Choices) : "Appearance" : 0 =
 	[
 		0 : "Normal"
@@ -1713,7 +1713,7 @@
 	_cone(integer) : "Inner (bright) angle" : 30
 	_cone2(integer) : "Outer (fading) angle" : 45
 	pitch(integer) : "Pitch" : -90
-	_light(color255) : "Brightness" : "255 255 128 200"
+	_light(color255_ext) : "Brightness" : "255 255 128 200"
 	_sky(Choices) : "Is Sky" : 0 = 
 	[ 
 		0 : "No"
@@ -1741,7 +1741,7 @@
 @PointClass base(Targetname, Angles, ZHLT_point) iconsprite("sprites/lightbulb.spr") = light_environment : "Environment" 
 [
 	pitch(integer) : "Pitch" : 0
-	_light(color255) : "Brightness" : "255 255 128 200"
+	_light(color255_ext) : "Brightness" : "255 255 128 200"
 ]
 
 @SolidClass base(Door, ZHLT) = momentary_door : "Momentary/Continuous door" 
