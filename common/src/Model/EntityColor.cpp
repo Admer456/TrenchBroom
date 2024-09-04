@@ -73,41 +73,57 @@ const std::string convertEntityColor(
   return entityColorAsString(color, colorRange);
 }
 
-Color parseEntityColor(const std::string& str)
+Color parseEntityColor(const std::string& str, bool withAlpha)
 {
   const auto components = kdl::str_split(str, " ");
   const auto range = Assets::detectColorRange(components);
   assert(range != Assets::ColorRange::Mixed);
 
-  int r = 0, g = 0, b = 0;
+  int r = 0, g = 0, b = 0, a = 255;
   if (range == Assets::ColorRange::Byte)
   {
     r = std::atoi(components[0].c_str());
     g = std::atoi(components[1].c_str());
     b = std::atoi(components[2].c_str());
+    if (components.size() > 3 && withAlpha)
+    {
+      a = std::atoi(components[3].c_str());
+    }
   }
   else if (range == Assets::ColorRange::Float)
   {
     r = static_cast<int>(std::atof(components[0].c_str()) * 255.0);
     g = static_cast<int>(std::atof(components[1].c_str()) * 255.0);
     b = static_cast<int>(std::atof(components[2].c_str()) * 255.0);
+    if (components.size() > 3 && withAlpha)
+    {
+      a = static_cast<int>(std::atof(components[3].c_str()) * 255.0);
+    }
   }
 
-  return Color(r, g, b);
+  return Color(r, g, b, a);
 }
 
 std::string entityColorAsString(
-  const Color& color, const Assets::ColorRange::Type colorRange)
+  const Color& color, const Assets::ColorRange::Type colorRange, bool withAlpha)
 {
   std::stringstream result;
   if (colorRange == Assets::ColorRange::Byte)
   {
     result << int(color.r() * 255.0f) << " " << int(color.g() * 255.0f) << " "
            << int(color.b() * 255.0f);
+    if (withAlpha)
+    {
+      result << " " << int(color.a() * 255.0f);
+    }
   }
   else if (colorRange == Assets::ColorRange::Float)
   {
     result << float(color.r()) << " " << float(color.g()) << " " << float(color.b());
+    if (withAlpha)
+    {
+      result << " " << float(color.a());
+    }
   }
   return result.str();
 }

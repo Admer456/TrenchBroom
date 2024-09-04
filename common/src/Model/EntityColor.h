@@ -43,7 +43,7 @@ Assets::ColorRange::Type detectColorRange(
 
 const std::string convertEntityColor(
   const std::string& str, Assets::ColorRange::Type colorRange);
-Color parseEntityColor(const std::string& str);
-std::string entityColorAsString(const Color& color, Assets::ColorRange::Type colorRange);
+Color parseEntityColor(const std::string& str, bool withAlpha = false);
+std::string entityColorAsString(const Color& color, Assets::ColorRange::Type colorRange, bool withAlpha = false);
 } // namespace Model
 } // namespace TrenchBroom
