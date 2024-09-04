@@ -71,7 +71,7 @@ private:
   // Qt's colour type does not support going beyond 1 or 255
   // The smart colour editor was modified to use TB's Color internally,
   // and when it writes the property value in "extra" mode, it samples
-  // the 4th value from the extra value textbox 
+  // the 4th value from the extra value textbox
   void setColor(const QColor& color);
   void setColor(const Color& color);
   Color getColor() const;

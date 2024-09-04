@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "Ensure.h"
 #include "Color.h"
+#include "Ensure.h"
 
 #include "kdl/reflection_decl.h"
 

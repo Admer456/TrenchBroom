@@ -159,7 +159,7 @@ float SmartColorEditor::getExtraValue(bool convertColorRange) const
     return 1.0f;
   }
 
-  if ( convertColorRange && m_colorType == Assets::ColorRange::Byte )
+  if (convertColorRange && m_colorType == Assets::ColorRange::Byte)
   {
     return m_extraValueBox->text().toInt() / 255.0f;
   }
@@ -243,10 +243,10 @@ static std::vector<Color> collectColors(
   return colors.get_data();
 }
 
-static std::vector<QColor> toQColors( const std::vector<Color> colors )
+static std::vector<QColor> toQColors(const std::vector<Color> colors)
 {
   auto result = std::vector<QColor>(colors.size());
-  for ( const auto& color : colors )
+  for (const auto& color : colors)
   {
     // The alpha component skews the colour preview, so make it always 100%
     auto colorModified = Color{color.r(), color.g(), color.b()};
@@ -257,8 +257,8 @@ static std::vector<QColor> toQColors( const std::vector<Color> colors )
 
 void SmartColorEditor::updateColorHistory()
 {
-  m_colorHistory->setColors(
-    toQColors(collectColors(std::vector<Model::Node*>{document()->world()}, propertyKey())));
+  m_colorHistory->setColors(toQColors(
+    collectColors(std::vector<Model::Node*>{document()->world()}, propertyKey())));
 
   const auto selectedColors =
     collectColors(document()->allSelectedEntityNodes(), propertyKey());
@@ -283,8 +283,7 @@ void SmartColorEditor::setColor(const QColor& color)
 
 void SmartColorEditor::setColor(const Color& color)
 {
-  auto value =
-    Model::entityColorAsString(color, m_colorType, m_withExtraValue);
+  auto value = Model::entityColorAsString(color, m_colorType, m_withExtraValue);
   document()->setProperty(propertyKey(), value);
   m_currentColor = color;
 }
