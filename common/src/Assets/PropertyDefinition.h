@@ -40,7 +40,17 @@ enum class PropertyDefinitionType
   IntegerProperty,
   FloatProperty,
   ChoiceProperty,
-  FlagsProperty
+  FlagsProperty,
+  PathProperty
+};
+
+enum class PathPropertyType
+{
+  GenericFilePath,
+  ModelPath,
+  SoundPath,
+  SpritePath,
+  DirectoryPath
 };
 
 class PropertyDefinition
@@ -269,6 +279,29 @@ public:
 
 private:
   bool doEquals(const PropertyDefinition* other) const override;
+  std::unique_ptr<PropertyDefinition> doClone(
+    std::string key,
+    std::string shortDescription,
+    std::string longDescription,
+    bool readOnly) const override;
+};
+
+class PathPropertyDefinition : public PropertyDefinitionWithDefaultValue<std::string>
+{
+private:
+  PathPropertyType m_pathType;
+
+public:
+  PathPropertyDefinition(
+    std::string key,
+    std::string shortDescription,
+    std::string longDescription,
+    bool readOnly,
+    PathPropertyType pathType,
+    std::optional<std::string> defaultValue = std::nullopt);
+
+  PathPropertyType pathType() const;
+
   std::unique_ptr<PropertyDefinition> doClone(
     std::string key,
     std::string shortDescription,

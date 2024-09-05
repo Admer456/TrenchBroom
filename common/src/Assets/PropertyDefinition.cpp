@@ -86,6 +86,7 @@ std::string PropertyDefinition::defaultValue(const PropertyDefinition& definitio
 {
   switch (definition.type())
   {
+  case PropertyDefinitionType::PathProperty:
   case PropertyDefinitionType::StringProperty: {
     const auto& stringDef = static_cast<const StringPropertyDefinition&>(definition);
     return stringDef.hasDefaultValue() ? stringDef.defaultValue() : "";
@@ -418,6 +419,44 @@ std::unique_ptr<PropertyDefinition> FlagsPropertyDefinition::doClone(
       option.isDefault());
   }
   return result;
+}
+
+PathPropertyDefinition::PathPropertyDefinition(
+  std::string key,
+  std::string shortDescription,
+  std::string longDescription,
+  bool readOnly,
+  PathPropertyType pathType,
+  std::optional<std::string> defaultValue)
+  : PropertyDefinitionWithDefaultValue{
+    std::move(key),
+    PropertyDefinitionType::PathProperty,
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    defaultValue}
+{
+  m_pathType = pathType;
+}
+
+PathPropertyType PathPropertyDefinition::pathType() const
+{
+  return m_pathType;
+};
+
+std::unique_ptr<PropertyDefinition> PathPropertyDefinition::doClone(
+  std::string key,
+  std::string shortDescription,
+  std::string longDescription,
+  bool readOnly) const
+{
+  return std::make_unique<PathPropertyDefinition>(
+    std::move(key),
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    m_pathType,
+    m_defaultValue);
 }
 
 UnknownPropertyDefinition::UnknownPropertyDefinition(
