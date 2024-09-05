@@ -132,7 +132,32 @@ void SmartPropertyEditorManager::createEditors()
     makeSmartPropertyEditorKeyMatcher({"color", "*_color", "*_color2", "*_colour"}),
     new SmartColorEditor{m_document});
   m_editors.emplace_back(
-    makeSmartPropertyEditorKeyMatcher({"message", "model"}),
+    [&](const auto& propertyKey, const auto& nodes) {
+      if (nodes.empty())
+      {
+        return false;
+      }
+
+      const auto filterPropertyDefinitions = [&](const auto* node) {
+        const auto* propDef = Model::propertyDefinition(node, propertyKey);
+        return propDef && propDef->type() == Assets::PropertyDefinitionType::PathProperty;
+      };
+
+      const auto getPathType = [&](const auto* node) {
+        return static_cast<const Assets::PathPropertyDefinition*>(
+                 Model::propertyDefinition(node, propertyKey))
+          ->pathType();
+      };
+
+      if (!filterPropertyDefinitions(*nodes.begin()))
+      {
+        return false;
+      }
+      const auto firstPathType = getPathType(*nodes.begin());
+      return std::all_of(nodes.begin(), nodes.end(), [&](const auto* node) {
+        return filterPropertyDefinitions(node) && getPathType(node) == firstPathType;
+      });
+    },
     new SmartAssetPathEditor{m_document});
   m_editors.emplace_back(
     makeSmartTypeWithSameDefinitionEditorMatcher(
