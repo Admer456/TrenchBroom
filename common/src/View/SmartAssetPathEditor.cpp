@@ -19,7 +19,9 @@
 
 #include "SmartAssetPathEditor.h"
 
+#include "Assets/PropertyDefinition.h"
 #include "IO/FileSystem.h"
+#include "Model/EntityNodeBase.h"
 #include "View/MapDocument.h"
 #include "View/ViewConstants.h"
 #include "fmt/format.h"
@@ -57,12 +59,16 @@ void SmartAssetPathEditor::createGui()
 
 void SmartAssetPathEditor::onBrowsePressed()
 {
-  const auto result = QFileDialog::getOpenFileName(
-                        nullptr,
-                        "Browsing for an asset...",
-                        QString::fromStdString(getGamePath()),
-                        QString::fromStdString(getFilter()))
-                        .toStdString();
+  const auto startingPath = QString::fromStdString(getGamePath());
+  const auto extensionFilter = QString::fromStdString(getFilter());
+  const auto result =
+    shouldBrowseDirectories()
+      ? QFileDialog::getExistingDirectory(
+          nullptr, "Browsing for a directory...", startingPath)
+          .toStdString()
+      : QFileDialog::getOpenFileName(
+          nullptr, "Browsing for an asset...", startingPath, extensionFilter)
+          .toStdString();
 
   setPath(transformAssetPath(result));
 }
@@ -70,7 +76,15 @@ void SmartAssetPathEditor::onBrowsePressed()
 void SmartAssetPathEditor::doUpdateVisual(
   const std::vector<Model::EntityNodeBase*>& nodes)
 {
-  // Do nothing for now t.b.h.
+  // There is nothing to do here, so
+}
+
+bool SmartAssetPathEditor::shouldBrowseDirectories() const
+{
+  const auto* node = *document()->allSelectedEntityNodes().begin();
+  const auto* propDef = static_cast<const Assets::PathPropertyDefinition*>(
+    Model::propertyDefinition(node, propertyKey()));
+  return propDef->pathType() == Assets::PathPropertyType::DirectoryPath;
 }
 
 void SmartAssetPathEditor::setPath(const std::string& value)
@@ -80,7 +94,23 @@ void SmartAssetPathEditor::setPath(const std::string& value)
 
 std::string SmartAssetPathEditor::getFilter() const
 {
-  return "All files (*);;Models (*.mdl);;Audio (*.wav);;Sprites (*.spr)";
+  const auto* node = *document()->allSelectedEntityNodes().begin();
+  const auto* propDef = static_cast<const Assets::PathPropertyDefinition*>(
+    Model::propertyDefinition(node, propertyKey()));
+  const auto pathType = propDef->pathType();
+
+  switch (pathType)
+  {
+  case Assets::PathPropertyType::ModelPath:
+    return "Model files (*.mdl *.gltf *.glb *.obj);;MDLs (*.mdl);;glTF 2.0 (*.gltf "
+           "*.glb);;OBJ (*.obj);;All files (*)";
+  case Assets::PathPropertyType::SoundPath:
+    return "Audio files (*.wav *.flac *.ogg *.mp3);;All files (*)";
+  case Assets::PathPropertyType::SpritePath:
+    return "Sprite files (*.spr *.png);;All files (*)";
+  }
+
+  return "All files (*)";
 }
 
 std::string SmartAssetPathEditor::getGamePath() const

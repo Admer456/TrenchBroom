@@ -166,6 +166,7 @@ QString EntityPropertyEditor::optionDescriptions(
     }
     return result;
   }
+  case Assets::PropertyDefinitionType::PathProperty:
   case Assets::PropertyDefinitionType::StringProperty:
   case Assets::PropertyDefinitionType::BooleanProperty:
   case Assets::PropertyDefinitionType::IntegerProperty:

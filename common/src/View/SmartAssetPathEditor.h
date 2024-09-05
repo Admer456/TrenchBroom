@@ -39,6 +39,7 @@ private:
 
   void doUpdateVisual(const std::vector<Model::EntityNodeBase*>& nodes) override;
 
+  bool shouldBrowseDirectories() const;
   std::string getFilter() const;
   std::string getGamePath() const;
   std::string transformAssetPath(std::string_view fullAssetPath) const;
