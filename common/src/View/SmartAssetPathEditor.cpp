@@ -46,13 +46,7 @@ void SmartAssetPathEditor::createGui()
   layout->setSpacing(LayoutConstants::NarrowVMargin);
   layout->addWidget(browseButton);
   layout->addStretch(1);
-
-  auto* outerLayout = new QHBoxLayout();
-  outerLayout->setContentsMargins(LayoutConstants::WideHMargin, 0, 0, 0);
-  outerLayout->setSpacing(0);
-  outerLayout->addLayout(layout);
-  outerLayout->addSpacing(LayoutConstants::WideHMargin);
-  setLayout(outerLayout);
+  setLayout(layout);
 
   connect(
     browseButton,
