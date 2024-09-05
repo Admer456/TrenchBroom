@@ -85,16 +85,13 @@ std::string SmartAssetPathEditor::getFilter() const
 
 std::string SmartAssetPathEditor::getGamePath() const
 {
-  const auto gamePath = document()->game()->gamePath();
-  const auto defaultMod = document()->game()->defaultMod();
+  const auto rootPath = document()->game()->gamePath().string();
   const auto mods = document()->mods();
+  // In case of 2 mods or more, this chooses the first enabled mod. Must let
+  // the user know this through UI or even let them choose the starting directory
+  const auto mod = mods.size() >= 1 ? mods[0] : document()->game()->defaultMod();
 
-  if (mods.size() >= 1)
-  {
-    return fmt::format("{}/{}", gamePath.string(), mods[0]);
-  }
-
-  return fmt::format("{}/{}", gamePath.string(), defaultMod);
+  return fmt::format("{}/{}", rootPath, mod);
 }
 
 std::string SmartAssetPathEditor::transformAssetPath(std::string_view fullAssetPath) const
