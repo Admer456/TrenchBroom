@@ -668,6 +668,31 @@ std::unique_ptr<Assets::PropertyDefinition> FgdParser::parsePropertyDefinition(
   {
     return parseFlagsPropertyDefinition(status, std::move(propertyKey));
   }
+  if (kdl::ci::str_is_equal(typeName, "file"))
+  {
+    return parsePathPropertyDefinition(
+      status, std::move(propertyKey), Assets::PathPropertyType::GenericFilePath);
+  }
+  if (kdl::ci::str_is_equal(typeName, "model"))
+  {
+    return parsePathPropertyDefinition(
+      status, std::move(propertyKey), Assets::PathPropertyType::ModelPath);
+  }
+  if (kdl::ci::str_is_equal(typeName, "sound"))
+  {
+    return parsePathPropertyDefinition(
+      status, std::move(propertyKey), Assets::PathPropertyType::SoundPath);
+  }
+  if (kdl::ci::str_is_equal(typeName, "sprite"))
+  {
+    return parsePathPropertyDefinition(
+      status, std::move(propertyKey), Assets::PathPropertyType::SpritePath);
+  }
+  if (kdl::ci::str_is_equal(typeName, "directory"))
+  {
+    return parsePathPropertyDefinition(
+      status, std::move(propertyKey), Assets::PathPropertyType::DirectoryPath);
+  }
 
   status.debug(
     line,
@@ -841,6 +866,22 @@ std::unique_ptr<Assets::PropertyDefinition> FgdParser::parseFlagsPropertyDefinit
       value, std::move(shortDescription), std::move(longDescription), defaultValue);
   }
   return definition;
+}
+
+std::unique_ptr<Assets::PropertyDefinition> FgdParser::parsePathPropertyDefinition(
+  ParserStatus& status, std::string propertyKey, Assets::PathPropertyType pathType)
+{
+  const auto readOnly = parseReadOnlyFlag(status);
+  auto shortDescription = parsePropertyDescription(status);
+  auto defaultValue = parseDefaultStringValue(status);
+  auto longDescription = parsePropertyDescription(status);
+  return std::make_unique<Assets::PathPropertyDefinition>(
+    std::move(propertyKey),
+    std::move(shortDescription),
+    std::move(longDescription),
+    readOnly,
+    pathType,
+    std::move(defaultValue));
 }
 
 std::unique_ptr<Assets::PropertyDefinition> FgdParser::parseUnknownPropertyDefinition(

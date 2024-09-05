@@ -21,6 +21,7 @@
 
 #include "Color.h"
 #include "FloatType.h"
+#include "Assets/PropertyDefinition.h"
 #include "IO/EntityDefinitionParser.h"
 #include "IO/Parser.h"
 #include "IO/Tokenizer.h"
@@ -144,6 +145,8 @@ private:
     ParserStatus& status, std::string propertyKey);
   std::unique_ptr<Assets::PropertyDefinition> parseFlagsPropertyDefinition(
     ParserStatus& status, std::string propertyKey);
+  std::unique_ptr<Assets::PropertyDefinition> parsePathPropertyDefinition(
+    ParserStatus& status, std::string propertyKey, Assets::PathPropertyType pathType);
   std::unique_ptr<Assets::PropertyDefinition> parseUnknownPropertyDefinition(
     ParserStatus& status, std::string propertyKey);
 
